@@ -55,6 +55,7 @@ scala_proto_library = rule(
     implementation = _scala_proto_library_impl,
     attrs = {
         "deps": attr.label_list(aspects = [scalapb_aspect]),
+        "scala_deps": attr.label_list(cfg = "target", default = []),
     },
     provides = [DefaultInfo, ScalaPBInfo, JavaInfo],
 )

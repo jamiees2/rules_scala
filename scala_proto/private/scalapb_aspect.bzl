@@ -112,6 +112,8 @@ def _scalapb_aspect_impl(target, ctx):
         # We allow some dependencies which are not protobuf, but instead
         # are jvm deps. This is to enable cases of custom generators which
         # add a needed jvm dependency.
+        print(target)
+        print(ctx.rule.attr.deps)
         java_info = target[JavaInfo]
         src_jars = depset()
         outs = depset()
@@ -137,6 +139,7 @@ def _scalapb_aspect_impl(target, ctx):
         toolchain = ctx.toolchains["@io_bazel_rules_scala//scala_proto:toolchain_type"]
         flags = []
         imps = [j[JavaInfo] for j in ctx.attr._implicit_compile_deps]
+        imps.extend([j[JavaInfo] for j in ctx.attr.scala_deps])
 
         if toolchain.with_grpc:
             flags.append("grpc")
@@ -228,6 +231,7 @@ scalapb_aspect = aspect(
         [ScalaPBImport],
     ],
     attrs = {
+        "scala_deps": attr.label_list(),
         "_protoc": attr.label(executable = True, cfg = "host", default = "@com_google_protobuf//:protoc"),
         "_implicit_compile_deps": attr.label_list(cfg = "target", default = [
             "//external:io_bazel_rules_scala/dependency/proto/implicit_compile_deps",
